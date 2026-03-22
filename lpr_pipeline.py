@@ -5,24 +5,18 @@ import numpy as np
 import onnxruntime as ort
 from pathlib import Path
 import os
-os.environ['ORT_LOGGING_LEVEL'] = '3'  # 屏蔽onnxruntime警告
+
 
 # ─────────────────────────────────────────────
-# 字符集（来自hyperlpr3/common/tokenize.py）
+# 字符集
 # ─────────────────────────────────────────────
-PROVINCES = ["皖", "沪", "津", "渝", "冀", "豫", "云", "辽", "黑", "湘",
-             "皖", "鲁", "新", "苏", "浙", "赣", "鄂", "桂", "甘", "晋",
-             "蒙", "陕", "吉", "闽", "贵", "粤", "川", "青", "琼", "宁",
-             "琼", "京", "藏", "电", "使", "领", "警", "学", "港", "澳"]
-ALPHABETS   = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q',
-               'R','S','T','U','V','W','X','Y','Z']
-DIGITS      = ['0','1','2','3','4','5','6','7','8','9']
-
-# 直接从hyperlpr3导入完整token表（最保险）
-try:
-    from hyperlpr3.common.tokenize import token as TOKEN
-except ImportError:
-    TOKEN = None
+TOKEN = ['blank', "'", '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
+         'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+         '云', '京', '冀', '吉', '学', '宁', '川', '挂', '新', '晋', '桂',
+         '民', '沪', '津', '浙', '渝', '港', '湘', '琼', '甘', '皖', '粤',
+         '航', '苏', '蒙', '藏', '警', '豫', '贵', '赣', '辽', '鄂', '闽',
+         '陕', '青', '鲁', '黑', '领', '使', '澳']
 
 # ─────────────────────────────────────────────
 # 检测预处理 / 后处理
@@ -148,10 +142,7 @@ class LPRPipeline:
         self.rec_out = self.rec.get_outputs()[0].name
 
         # 字符集
-        if TOKEN is not None:
-            self.token = TOKEN
-        else:
-            raise RuntimeError("无法导入字符集，请确保hyperlpr3已安装")
+        self.token = TOKEN
 
     def __call__(self, img: np.ndarray):
         """
